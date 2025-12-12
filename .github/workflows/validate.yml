@@ -1,0 +1,67 @@
+name: Validate Profiles
+
+on:
+  pull_request:
+    paths:
+      - 'profiles/**/*.json'
+      - 'scripts/**'
+      - '.github/workflows/validate.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'profiles/**/*.json'
+
+jobs:
+  validate:
+    name: Validate Profile JSON
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Run validation
+        run: go run scripts/validate.go
+
+      - name: Check for common issues
+        run: |
+          echo "Checking for hardcoded secrets..."
+          if grep -r "api.*key.*:.*\"sk-" profiles/ || \
+             grep -r "password.*:.*\"[^$]" profiles/ || \
+             grep -r "token.*:.*\"[^$]" profiles/; then
+            echo "❌ Found potential hardcoded secrets in profiles!"
+            exit 1
+          fi
+          echo "✅ No hardcoded secrets found"
+
+      - name: Validate marketplace sources
+        run: |
+          echo "Checking marketplace sources..."
+          invalid_found=false
+          for profile in profiles/**/*.json; do
+            while IFS= read -r source; do
+              if [ "$source" != "github" ]; then
+                echo "❌ Invalid marketplace source in $profile: $source"
+                invalid_found=true
+              fi
+            done < <(jq -r '.marketplaces[]?.source // empty' "$profile")
+          done
+          if [ "$invalid_found" = true ]; then
+            exit 1
+          fi
+          echo "✅ All marketplace sources are valid"
+
+      - name: Summary
+        if: success()
+        run: |
+          profile_count=$(find profiles -name "*.json" | wc -l)
+          echo "✅ Successfully validated $profile_count profiles"

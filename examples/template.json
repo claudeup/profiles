@@ -1,0 +1,41 @@
+{
+  "name": "my-profile",
+  "description": "A comprehensive description of what this profile is for and what it includes",
+
+  "plugins": [
+    "plugin-name@marketplace-name"
+  ],
+
+  "mcpServers": [
+    {
+      "name": "example-server",
+      "command": "npx",
+      "args": ["-y", "@example/mcp-server"],
+      "scope": "user",
+      "secrets": {
+        "API_KEY": {
+          "description": "API key for the service",
+          "sources": [
+            {"type": "env", "key": "EXAMPLE_API_KEY"},
+            {"type": "1password", "ref": "op://Private/Example/credential"},
+            {"type": "keychain", "service": "example-service", "account": "default"}
+          ]
+        }
+      }
+    }
+  ],
+
+  "marketplaces": [
+    {
+      "source": "github",
+      "repo": "owner/repository"
+    }
+  ],
+
+  "detect": {
+    "files": ["package.json", "specific-config.json"],
+    "contains": {
+      "package.json": "\"example-framework\""
+    }
+  }
+}
