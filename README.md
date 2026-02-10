@@ -1,4 +1,4 @@
-# claudeup/profiles
+# claudeup profiles
 
 Community profiles for [claudeup](https://github.com/claudeup/claudeup) -- pre-configured Claude Code setups you can apply in one command.
 
