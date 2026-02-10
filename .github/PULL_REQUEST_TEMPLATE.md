@@ -2,7 +2,9 @@
 
 **Profile name:** `category/profile-name.json`
 
-**Category:** [ai-development | backend | data-science | devops | frontend | mobile | security]
+**Category:** [languages | platforms | stacks | tools | workflow]
+
+**Profile type:** [standard | composable]
 
 ## Description
 
@@ -14,24 +16,25 @@
 
 ## What's Included
 
-<!-- List the main plugins and MCP servers -->
+<!-- List the main components. For composable profiles, list the included profiles. -->
 
-**Plugins:**
--
+## **Plugins (or included profiles):**
 
-**MCP Servers:**
--
+**Scope:** [user | project]
 
-**Marketplaces:**
--
+## **Marketplaces:**
+
+## **MCP Servers (if any):**
 
 ## Testing
 
-- [ ] I have tested this profile with claudeup locally
+- [ ] I have tested this profile with `claudeup profile apply` locally
 - [ ] Profile passes validation (`./scripts/validate.sh`)
-- [ ] All plugins and MCP servers work as expected
-- [ ] Secrets are handled securely (no hardcoded credentials)
+- [ ] All plugins work as expected at the specified scope
+- [ ] No hardcoded credentials or API keys
+- [ ] Secrets use proper secret sources (env, 1password, keychain)
 - [ ] Project detection rules work correctly (if included)
+- [ ] Composable profiles resolve correctly (if using `includes`)
 
 ## Additional Notes
 
@@ -44,16 +47,17 @@
 - [ ] Profile is in the correct category directory
 - [ ] File name uses lowercase with hyphens
 - [ ] Description is clear and detailed (10+ characters)
-- [ ] Only includes relevant plugins (not a kitchen sink)
+- [ ] Standard profiles have `marketplaces` field
+- [ ] Composable profiles have non-empty `includes` field
+- [ ] Plugins use correct `name@marketplace-ref` format
 - [ ] Marketplaces use valid GitHub repo format (`owner/repo`)
-- [ ] Secrets use proper secret sources (env, 1password, keychain)
+- [ ] `perScope` assigns plugins to appropriate scope (user vs project)
 - [ ] No hardcoded credentials or API keys
-- [ ] Project detection rules included (if applicable)
 - [ ] Tested locally with claudeup
 
 ### For Maintainers
 
 - [ ] Code review completed
-- [ ] Security review completed (MCP commands, plugin sources)
+- [ ] Security review completed (MCP commands, plugin sources, credentials)
 - [ ] Category is appropriate
 - [ ] Profile adds value to the community
