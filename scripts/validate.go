@@ -14,10 +14,13 @@ import (
 type Profile struct {
 	Name         string        `json:"name"`
 	Description  string        `json:"description"`
+	Includes     []string      `json:"includes,omitempty"`
 	Plugins      []string      `json:"plugins"`
 	MCPServers   []MCPServer   `json:"mcpServers"`
 	Marketplaces []Marketplace `json:"marketplaces"`
+	PerScope     interface{}   `json:"perScope,omitempty"`
 	Detect       *Detection    `json:"detect,omitempty"`
+	LocalItems   interface{}   `json:"localItems,omitempty"`
 }
 
 type MCPServer struct {
@@ -108,13 +111,30 @@ func main() {
 			return nil
 		}
 
-		if len(profile.Marketplaces) == 0 {
+		hasIncludes := len(profile.Includes) > 0
+
+		// Marketplaces are required unless profile uses includes
+		if !hasIncludes && len(profile.Marketplaces) == 0 {
 			fmt.Println("❌ FAILED")
 			errors = append(errors, ValidationError{
 				File:    relPath,
-				Message: "Missing required field: marketplaces (must have at least one)",
+				Message: "Missing required field: marketplaces (or includes)",
 			})
 			return nil
+		}
+
+		// Validate includes if present
+		if hasIncludes {
+			for _, inc := range profile.Includes {
+				if strings.TrimSpace(inc) == "" {
+					fmt.Println("❌ FAILED")
+					errors = append(errors, ValidationError{
+						File:    relPath,
+						Message: "includes contains empty string",
+					})
+					return nil
+				}
+			}
 		}
 
 		// Validate name format
@@ -142,22 +162,24 @@ func main() {
 			})
 		}
 
-		// Validate marketplace format
-		repoRegex := regexp.MustCompile(`^[^/]+/[^/]+$`)
-		for _, marketplace := range profile.Marketplaces {
-			if marketplace.Source != "github" {
-				errors = append(errors, ValidationError{
-					File:    relPath,
-					Message: fmt.Sprintf("Invalid marketplace source: %s (only 'github' is supported)", marketplace.Source),
-				})
-			}
-			if !repoRegex.MatchString(marketplace.Repo) {
-				fmt.Println("❌ FAILED")
-				errors = append(errors, ValidationError{
-					File:    relPath,
-					Message: fmt.Sprintf("Invalid marketplace repo format: %s (should be owner/repo)", marketplace.Repo),
-				})
-				return nil
+		// Validate marketplace format (skip for composable profiles)
+		if !hasIncludes {
+			repoRegex := regexp.MustCompile(`^[^/]+/[^/]+$`)
+			for _, marketplace := range profile.Marketplaces {
+				if marketplace.Source != "github" {
+					errors = append(errors, ValidationError{
+						File:    relPath,
+						Message: fmt.Sprintf("Invalid marketplace source: %s (only 'github' is supported)", marketplace.Source),
+					})
+				}
+				if !repoRegex.MatchString(marketplace.Repo) {
+					fmt.Println("❌ FAILED")
+					errors = append(errors, ValidationError{
+						File:    relPath,
+						Message: fmt.Sprintf("Invalid marketplace repo format: %s (should be owner/repo)", marketplace.Repo),
+					})
+					return nil
+				}
 			}
 		}
 
