@@ -1,0 +1,5 @@
+{
+  "name": "secure-dev",
+  "description": "Security-focused development: essentials + security, testing, debugging",
+  "includes": ["essentials", "security", "testing", "debugging"]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "testing",
+  "description": "Testing, TDD, and performance testing",
+  "marketplaces": [
+    { "source": "github", "repo": "wshobson/agents" },
+    { "source": "github", "repo": "davila7/claude-code-templates" }
+  ],
+  "perScope": {
+    "project": {
+      "plugins": [
+        "performance-testing-review@claude-code-workflows",
+        "tdd-workflows@claude-code-workflows",
+        "testing-suite@claude-code-templates",
+        "unit-testing@claude-code-workflows"
+      ]
+    }
+  }
+}

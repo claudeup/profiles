@@ -1,0 +1,5 @@
+{
+  "name": "fullstack-python",
+  "description": "Python fullstack: essentials + Python, backend, testing",
+  "includes": ["essentials", "python", "backend", "testing"]
+}

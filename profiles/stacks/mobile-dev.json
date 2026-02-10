@@ -1,0 +1,5 @@
+{
+  "name": "mobile-dev",
+  "description": "Mobile development: essentials + mobile, frontend, testing",
+  "includes": ["essentials", "mobile", "frontend", "testing"]
+}

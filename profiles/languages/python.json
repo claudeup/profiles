@@ -1,0 +1,13 @@
+{
+  "name": "python",
+  "description": "Python development",
+  "marketplaces": [{ "source": "github", "repo": "wshobson/agents" }],
+  "perScope": {
+    "project": {
+      "plugins": ["python-development@claude-code-workflows"]
+    }
+  },
+  "detect": {
+    "files": ["pyproject.toml", "setup.py", "requirements.txt"]
+  }
+}

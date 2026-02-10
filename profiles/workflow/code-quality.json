@@ -1,0 +1,22 @@
+{
+  "name": "code-quality",
+  "description": "Code review, refactoring, and style enforcement",
+  "marketplaces": [
+    { "source": "github", "repo": "anthropics/claude-plugins-official" },
+    { "source": "github", "repo": "wshobson/agents" },
+    { "source": "github", "repo": "obra/superpowers-marketplace" }
+  ],
+  "perScope": {
+    "user": {
+      "plugins": [
+        "code-refactoring@claude-code-workflows",
+        "code-review@claude-plugins-official",
+        "code-review-ai@claude-code-workflows",
+        "codebase-cleanup@claude-code-workflows",
+        "comprehensive-review@claude-code-workflows",
+        "elements-of-style@superpowers-marketplace",
+        "pr-review-toolkit@claude-plugins-official"
+      ]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "memory",
+  "description": "Memory and context persistence: episodic memory, claude-mem",
+  "marketplaces": [
+    { "source": "github", "repo": "obra/superpowers-marketplace" },
+    { "source": "github", "repo": "thedotmack/claude-mem" }
+  ],
+  "perScope": {
+    "user": {
+      "plugins": [
+        "claude-mem@thedotmack",
+        "episodic-memory@superpowers-marketplace"
+      ]
+    }
+  }
+}

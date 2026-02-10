@@ -1,0 +1,5 @@
+{
+  "name": "essentials",
+  "description": "Core tools: memory, superpowers, git workflow, code quality",
+  "includes": ["memory", "superpowers", "git", "code-quality"]
+}

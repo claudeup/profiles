@@ -1,0 +1,27 @@
+{
+  "name": "frontend",
+  "description": "Frontend development: Next.js, Tailwind, shadcn, Vercel",
+  "marketplaces": [
+    { "source": "github", "repo": "anthropics/claude-plugins-official" },
+    { "source": "github", "repo": "davila7/claude-code-templates" }
+  ],
+  "perScope": {
+    "project": {
+      "plugins": [
+        "frontend-design@claude-plugins-official",
+        "nextjs-vercel-pro@claude-code-templates",
+        "vercel@claude-plugins-official"
+      ]
+    }
+  },
+  "detect": {
+    "files": [
+      "next.config.js",
+      "next.config.ts",
+      "next.config.mjs",
+      "tailwind.config.js",
+      "tailwind.config.ts",
+      "components.json"
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "go",
+  "description": "Go language development with gopls LSP",
+  "marketplaces": [
+    { "source": "github", "repo": "anthropics/claude-plugins-official" }
+  ],
+  "perScope": {
+    "project": {
+      "plugins": ["gopls-lsp@claude-plugins-official"]
+    }
+  },
+  "detect": {
+    "files": ["go.mod", "go.sum"]
+  }
+}
