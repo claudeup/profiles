@@ -48,10 +48,32 @@ while IFS= read -r -d '' profile; do
         has_error=true
     fi
 
-    if ! jq -e '.marketplaces' "$profile" >/dev/null 2>&1; then
-        echo -e "${RED}FAILED${NC}"
-        echo "  ❌ Missing required field: marketplaces"
-        has_error=true
+    # Check if profile uses includes (composable profile)
+    has_includes=$(jq -e '.includes' "$profile" >/dev/null 2>&1 && echo "true" || echo "false")
+
+    # Marketplaces are required unless profile uses includes
+    if [ "$has_includes" = "false" ]; then
+        if ! jq -e '.marketplaces' "$profile" >/dev/null 2>&1; then
+            echo -e "${RED}FAILED${NC}"
+            echo "  ❌ Missing required field: marketplaces (or includes)"
+            has_error=true
+        fi
+    fi
+
+    # Validate includes format if present
+    if [ "$has_includes" = "true" ]; then
+        if ! jq -e '.includes | type == "array"' "$profile" >/dev/null 2>&1; then
+            echo -e "${RED}FAILED${NC}"
+            echo "  ❌ includes must be an array"
+            has_error=true
+        fi
+
+        include_count=$(jq -r '.includes | length' "$profile" 2>/dev/null || echo "0")
+        if [ "$include_count" -eq 0 ]; then
+            echo -e "${RED}FAILED${NC}"
+            echo "  ❌ includes array cannot be empty"
+            has_error=true
+        fi
     fi
 
     if [ "$has_error" = true ]; then
@@ -83,19 +105,21 @@ while IFS= read -r -d '' profile; do
         WARNINGS=$((WARNINGS + 1))
     fi
 
-    # Check marketplace format
-    invalid_marketplace=false
-    while IFS= read -r marketplace; do
-        if ! echo "$marketplace" | grep -qE '^[^/]+/[^/]+$'; then
-            echo -e "${RED}FAILED${NC}"
-            echo "  ❌ Invalid marketplace repo format: $marketplace (should be owner/repo)"
-            invalid_marketplace=true
-        fi
-    done < <(jq -r '.marketplaces[]?.repo // empty' "$profile")
+    # Check marketplace format (skip for composable profiles)
+    if [ "$has_includes" = "false" ]; then
+        invalid_marketplace=false
+        while IFS= read -r marketplace; do
+            if ! echo "$marketplace" | grep -qE '^[^/]+/[^/]+$'; then
+                echo -e "${RED}FAILED${NC}"
+                echo "  ❌ Invalid marketplace repo format: $marketplace (should be owner/repo)"
+                invalid_marketplace=true
+            fi
+        done < <(jq -r '.marketplaces[]?.repo // empty' "$profile")
 
-    if [ "$invalid_marketplace" = true ]; then
-        ERRORS=$((ERRORS + 1))
-        continue
+        if [ "$invalid_marketplace" = true ]; then
+            ERRORS=$((ERRORS + 1))
+            continue
+        fi
     fi
 
     echo -e "${GREEN}PASSED${NC}"
